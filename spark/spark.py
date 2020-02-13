@@ -13,20 +13,19 @@ sqlContext = SQLContext(sparkSession=spark, sparkContext = spark.sparkContext)
 
 
 dg2016 = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2016.csv', header = True)
-# dg2014 = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2014_CC/DocGraph_Hop_Teaming_2014.csv', header = True)
-# dg2015 = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2015_CC/DocGraph_Hop_Teaming_2015.csv', header = True)
+dg2014 = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2014_CC/DocGraph_Hop_Teaming_2014.csv', header = True)
+dg2015 = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2015_CC/DocGraph_Hop_Teaming_2015.csv', header = True)
 #taxonomy = sqlContext.read.csv('s3a://coordinated-care-data/test/DocGraph_Hop_Teaming_2016.csv', header = True)
 #nppesdata = sqlContext.read.csv('s3a://coordinated-care-data/nppes/npidata_pfile_20050523-20200112.csv', header = True)
 util = sqlContext.read.format('csv').option("header", "true").option("delimiter", "\t").load('s3a://coordinated-care-data/test/Medicare_Physician_and_Other_Supplier_NPI_Aggregate_CY2016.txt', header = True)
 
 # MAKE TEMPORARY SQL TABLES FROM IMPORTED DATA
-# dg2014.registerTempTable("dg2014")
-# dg2015.registerTempTable("dg2015")
+dg2014.registerTempTable("dg2014")
+dg2015.registerTempTable("dg2015")
 dg2016.registerTempTable("dg2016")
 util.registerTempTable("util")
-#nppesdata.registerTempTable("nppes")
-#util.show(n = 5, vertical = True)
-#nppesheader.show(5)
+nppesdata.registerTempTable("nppes")
+
 
 #NPPES COLUMNS:
 # NPI, Entity Type Code, Provider Last Name (Legal Name), Provider First Name, Provider Credential Text, Provider Business Mailing Address Postal Code, NPI Deactivation Date, Healthcare Provider Taxonomy Code_1, Is Sole Proprietor,
@@ -37,33 +36,32 @@ util.registerTempTable("util")
 # DocGraph columns
 #from_npi|    to_npi|patient_count|transaction_count|average_day_wait|std_day_wait
 #RUN A SQL QUERY ON THE TABLE
-
 # Merge 3 years of DocGraph, average measures, require relationship in 2016
-# dg = sqlContext.sql("""
-# select
-# from_npi,
-# to_npi,
-# cast(avg(patient_count) as int) patient_count,
-# cast(avg(transaction_count) as int) transaction_count,
-# cast(avg(average_day_wait) as int) average_day_wait,
-# cast(avg(std_day_wait) as int) std_day_wait
-# from (select *
-# from dg2016
-#
-# union
-#
-# select *
-# from dg2015
-#
-# union
-#
-# select *
-# from dg2014
-#      ) a
-# where from_npi in (select from_npi from dg2016)
-# and to_npi in (select to_npi from dg2016)
-# group by from_npi, to_npi
-# """)
+ dg = sqlContext.sql("""
+ select
+ from_npi,
+ to_npi,
+ cast(avg(patient_count) as int) patient_count,
+ cast(avg(transaction_count) as int) transaction_count,
+ cast(avg(average_day_wait) as int) average_day_wait,
+ cast(avg(std_day_wait) as int) std_day_wait
+ from (select *
+ from dg2016
+
+ union
+
+ select *
+ from dg2015
+
+ union
+
+ select *
+ from dg2014
+      ) a
+ where from_npi in (select from_npi from dg2016)
+ and to_npi in (select to_npi from dg2016)
+ group by from_npi, to_npi
+ """)
 
 dg = sqlContext.sql("""
 select
@@ -102,7 +100,7 @@ OR npi in (select to_npi from dg))
 docs.registerTempTable("util")
 
 
-#create updated relationship table, require they are in the
+# Create updated relationship table, require they are in the
 rel = sqlContext.sql("""
 select
 'REFERRED_TO' as Type,
@@ -118,7 +116,7 @@ where from_npi in
 or to_npi in (select NPI from util)
 """)
 
-#
+# Reformat column headers of node table for Neo4j
 docs = docs.withColumnRenamed("NPI", "Doctor:ID")\
     .withColumnRenamed("PROVIDER_TYPE", ":LABEL")\
     .withColumnRenamed("TOTAL_SERVICES", "Total_Services:int")\
@@ -129,7 +127,7 @@ docs = docs.withColumnRenamed("NPI", "Doctor:ID")\
     .withColumnRenamed("BENEFICIARY_AVERAGE_RISK_SCORE","BENEFICIARY_AVERAGE_RISK_SCORE:int")\
     .withColumnRenamed("BENEFICIARY_CC_DIAB_PERCENT","BENEFICIARY_CC_DIAB_PERCENT:int")
 
-#
+# Reformat column headers of relationship table for Neo4j
 rel = rel.withColumnRenamed("Type",":TYPE")\
     .withColumnRenamed("from_npi", ":START_ID")\
     .withColumnRenamed("to_npi", ":END_ID")\
@@ -139,7 +137,7 @@ rel = rel.withColumnRenamed("Type",":TYPE")\
     .withColumnRenamed("std_day_wait", "std_day_wait:int")\
 
 # WRITE DATA to csv in s3
-#REPARTITION?
+# REPARTITION?
 #
 rel.repartition(1).write.option('header', 'true').mode('append').csv('s3a://coordinated-care-data/relationships')
 docs.repartition(1).write.option('header', 'true').mode('append').csv('s3a://coordinated-care-data/nodes')
