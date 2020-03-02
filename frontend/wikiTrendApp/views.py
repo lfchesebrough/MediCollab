@@ -9,28 +9,32 @@ from wikiTrendApp.neo4j_connector import neo4jConnector
 def index():
     if request.method == 'POST':
         search = request.form['search']
-        return search_results(search)
+        zip = request.form['zip']
+
+        return search_results(search, zip)
 
     return render_template("index.html")
 
 @app.route('/results')
-def search_results(search):
+def search_results(search, zip):
     #results = pageRank(search)
-    results = specialist(search)
+    results = specialist(search, zip)
     #if not results:
         #return redirect('/')
 
     #else:
-    return render_template("results.html", len=len(results), results=results, search=search)
+    return render_template("results.html", len=len(results), results=results, search=search, zip=zip)
 
     #return render_template("results.html", search=search)
 
-def specialist(search):
+def specialist(search, zip):
     gc = neo4jConnector().graph
+
     temp = gc.run(
     '''
-    MATCH (n:'''+search+''') RETURN n.Doctor as NPI, n.TOTAL_UNIQUE_BENES as Total_Bene, n.TOTAL_MEDICARE_ALLOWED_AMT / n.TOTAL_UNIQUE_BENES as Cost_Per_Bene order by n.TOTAL_MEDICARE_ALLOWED_AMT / n.TOTAL_UNIQUE_BENES DESC LIMIT 25
-    '''
+    MATCH (n:'''+search+''' {Zip_Code:"'''+zip+'''"})-[r:REFERRED_TO]-(m)
+    where n.community = m.community
+    return n.Last_Name, n.First_Name, n.NPI, n.Quality_Score, n.Cost_Per_Patient, toInteger(avg(m.Cost_Per_Patient)), n.pagerank order by n.pagerank desc'''
     ).data()
 
     results = []
@@ -70,3 +74,7 @@ def pageRank(search):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
+
+
+    
+    
