@@ -1,14 +1,128 @@
 var viz;
-function draw(search) {
+function draw(search, zip) {
     var config = {
         container_id: "viz",
         server_url: "bolt://54.236.34.188:7687",
         server_user: "neo4j",
         server_password: "insight",
         labels: {
-            "Endocrinology": {
-                "caption": "NPPES_PROVIDER_LAST_ORG_NAME",
-                "size": "TOTAL_UNIQUE_BENES"
+            "Family Practice":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Endocrinology":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Dermatology":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"]
+            },
+            "Nephrology":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Gastroenterology":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Physical Therapist in Private Practice":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Obstetrics & Gynecology":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Orthopedic Surgery":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },
+            "Internal Medicine":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
+            },            "Psychiatry":{
+                "size": "pagerank",
+                "community": "community",
+                "title_properties": [
+                            "Last_Name",
+                            "First_Name",
+                            "NPI",
+                            "Cost_Per_Patient",
+                            "Quality_Score",
+                            "Zip_Code"
+                        ]
             }
         },
         relationships: {
@@ -17,7 +131,7 @@ function draw(search) {
                 "caption": false
             }
         },
-        initial_cypher: 'MATCH (n:'+search+')-[r:REFERRED_TO]->(p)-[c:REFERRED_TO]->(q) WHERE r.average_day_wait < 10 and c.average_day_wait < 10 and r.patient_count > 20 and c.patient_count > 20 RETURN * LIMIT 100'
+        initial_cypher: 'MATCH (n:`'+search+'` {Zip_Code:"'+zip+'"})-[r]-(m) WHERE m:`Family Practice` OR m:`Physical Therapist in Private Practice`OR m:`Obstetrics & Gynecology`$
     };
 
     viz = new NeoVis.default(config);
@@ -28,3 +142,4 @@ function draw(search) {
 function stabilize() {
     viz.stabilize();
 }
+
