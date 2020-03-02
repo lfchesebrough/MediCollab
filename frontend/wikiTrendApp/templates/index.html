@@ -4,24 +4,39 @@
 <link rel="stylesheet" href="../static/css/index.css">
 <div class="container-fluid scrollable" id="background-pic">
     <h1>Welcome!</h1>
-    <p><b>MediCollab</b> enables you to analyze Medicare provider networks<p>
+    <p>Enter the type of doctor you're interested in and your zip code, <b>MediCollab</b> will return a network visualization of the best doctors and their colleagues, as well as$
 <form method="POST" class="was-validated">
 <div class="form-group">
   <select class="custom-select" name = "search" required>
     <option value="">Choose Specialty</option>
-    <option value="`Cardiovascular Disease (Cardiology)`">Cardiovascular Disease (Cardiology)</option>
-    <option value="Endocrinology">Endocrinology</option>
-    <option value="`Gynecological Oncology`">Gynecological Oncology</option>
-    <option value="`Interventional Cardiology`">Interventional Cardiology</option>
-    <option value="`Gynecological Oncology`">Gynecological Oncology</option>
-    <option value="`Nephrology`">Nephrology</option>
-    <option value="`Neurosurgery`">Neurosurgery</option>
-    <option value="`Pulmonary Disease`">Pulmonary Disease</option>
-    <option value="`Urology`">Urology</option>
+    <option value='`Audiologist`'>Audiologist</option>
+    <option value='`Cardiology`'>Cardiology</option>
+    <option value='`Chiropractic`'>Chiropractic</option>
+    <option value='`Dermatology`'>Dermatology</option>
+    <option value='`Endocrinology`'>Endocrinology</option>
+    <option value='`Family Practice`'>Family Practice</option>
+    <option value='`Gastroenterology`'>Gastroenterology</option>
+    <option value='`General Surgery`'>General Surgery</option>
+    <option value='`Hematology-Oncology`'>Hematology-Oncology</option>
+    <option value='`Nephrology`'>Nephrology</option>
+    <option value='`Neurology`'>Neurology</option>
+    <option value='`Obstetrics & Gynecology`'>Obstetrics & Gynecology</option>
+    <option value='`Ophthalmology`'>Ophthalmology</option>
+    <option value='`Optometry`'>Optometry</option>
+    <option value='`Orthopedic Surgery`'>Orthopedic Surgery</option>
+    <option value='`Otolaryngology`'>Otolaryngology</option>
+    <option value='`Physical Therapist in Private Practice`'>Physical Therapist in Private Practice</option>
+    <option value='`Podiatry`'>Podiatry</option>
+    <option value='`Psychiatry`'>Psychiatry</option>
+    <option value='`Pulmonary Disease`'>Pulmonary Disease</option>
+    <option value='`Urology`'>Urology</option>
   </select>
+  <br>
+  <br>
+  <input class="form-control is-valid" name="zip" placeholder="Zip Code" type="text" pattern="[0-9]{5}" required>
 <br>
 <br>
-        <button type="submit" name="search" class="btn btn-primary">Submit</button>
+        <button type="submit" name="searchsubmit" class="btn btn-primary">Submit</button>
     </form>
     <br>
 
