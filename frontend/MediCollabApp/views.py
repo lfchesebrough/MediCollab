@@ -1,8 +1,8 @@
-from wikiTrendApp import app
+from MediCollabApp import app
 from flask import flash, request, render_template, redirect
 
 from py2neo import Graph
-from wikiTrendApp.neo4j_connector import neo4jConnector
+from MediCollabApp.neo4j_connector import neo4jConnector
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
