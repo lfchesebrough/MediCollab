@@ -12,7 +12,7 @@ Simply enter the specialty you are interested in along with the zip code you wan
 
 Under the hood, every Medicare doctor is stored along with information on their relationships with other Medicare providers, which comprises a graph database. This allows you to run graph algorithms giving further insight into how each doctor fits into the broader network. Relationships between doctors are based on having patients in common.
 
-![Screenshot of MediCollab Results](https://github.com/lfchesebrough/MediCollab/blob/master/screenshot)
+![Screenshot of MediCollab Results](https://github.com/lfchesebrough/MediCollab/blob/master/screenshot.png)
 
 ## Background
 
