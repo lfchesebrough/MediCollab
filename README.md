@@ -5,7 +5,7 @@ New York 2020A</br>
 
 ## Introduction
 
-[MediCollab](www.dataglobe.me) is a tool to explore Medicare provider networks and identify the best providers in a given area. 
+[MediCollab](http://www.dataglobe.me) is a tool to explore Medicare provider networks and identify the best providers in a given area. 
 
 #### How to Use
 Simply enter the specialty you are interested in along with the zip code you want to search, and MediCollab will return a network graphic of those specialists and their connections to other specialists, along with a list of specialists in that zip code ranked by their network influence. The results include information on the average out of pocket cost for each provider and their quality scores.
